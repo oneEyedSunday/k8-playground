@@ -1,0 +1,7 @@
+FROM node:14.9.0-stretch-slim
+
+COPY client.js .
+
+EXPOSE 5000
+
+CMD ["node", "client.js"]

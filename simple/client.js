@@ -7,8 +7,9 @@ function getNumber(limit = 10) {
 }
 
 const server = http.createServer((req, res) => {
+    console.info('Ok, we have a hit: ', req.url);
 
-    http.get({ path: `/compute/${getNumber(100)}/${getNumber(200)}`, host: 'localhost', port: 3000, timeout: 200 }, (response) => {
+    http.get({ path: `/compute/${getNumber(100)}/${getNumber(200)}`, host: 'server-service', port: 3000, timeout: 200 }, (response) => {
         if (response.statusMessage === 'OK') {
             let result = '';
 
@@ -30,6 +31,6 @@ const server = http.createServer((req, res) => {
     })
 });
 
-server.listen(5000, () => {
-    console.log('Listening on port: 5000');
+server.listen(3000, () => {
+    console.log('Listening on port: 3000');
 })

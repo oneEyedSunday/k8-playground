@@ -22,6 +22,7 @@ function handleRoute(route = '/') {
 }
 
 const server = http.createServer((req, res) => {
+    console.log('Ok we have a hit: ', req.url);
     res.setHeader('ContentType', 'application/json');
     res.setHeader('Content-Type', 'application/json');
     const message = handleRoute(req.url);

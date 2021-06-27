@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: curl
+  labels:
+    app: curl
+spec:
+  containers:
+    - name: curl
+      image: radial/busyboxplus:curl
+      imagePullPolicy: Never
+      command: [ "sleep 50m" ]
+      # ports:
+      # - name: my-nginx
+      #   containerPort: 80
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: my-nginx-deployment
+    labels:
+        app: my-nginx
+spec:
+    selector:
+        matchLabels:
+            app: my-nginx
+            run: my-nginx
+    replicas: 3
+    template:
+        metadata:
+            labels:
+                app: my-nginx
+                run: my-nginx
+        spec:
+          containers:
+          - name: my-nginx
+            image: nginx:1.20.0-alpine-perl
+            ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx
+  labels:
+    run: my-nginx
+spec:
+  selector:
+      run: nginx
+  ports:
+  -   port: 80
+      protocol: TCP
+      # targetPort: my-nginx

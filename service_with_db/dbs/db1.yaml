@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pg-db1-secrets
+type: Opaque
+data:
+  POSTGRES_PASSWORD: fmdtYTa1 # no ;; stuff
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-db1-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-db1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pg1
+  template:
+    metadata:
+      labels:
+        app: pg1
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:14
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pg-db1-secrets
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          value: 'database1'
+        - name: POSTGRES_USER
+          value: 'app_user'
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: pg-db1-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: pg-db1-storage
+        persistentVolumeClaim:
+          claimName: pg-db1-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pg1-svc
+spec:
+  selector:
+    app: pg1
+  ports:
+  - port: 5432
+    targetPort: 5432

@@ -39,11 +39,30 @@ kubectl apply -f dbs/
 Inspect your database
 
 ```sh
+# log in to your database shell
 psql -U app_user -d database1
 
+# inspect database schemas, tables and see other databases
 \d
 \dt
 \l
 ```
 
 TODO use helm to automate some of these db configuration
+
+Deploy api services
+
+Deploy service to registry (just use https://ttl.sh/ for now)
+
+
+IMAGE_NAME="oneeyedsunday_api1_$(uuidgen)"
+
+```sh
+IMAGE_NAME="oneeyedsunday_api1"                          
+docker build -t ttl.sh/${IMAGE_NAME}:1h .                                
+docker push ttl.sh/${IMAGE_NAME}:1h
+```
+
+```sh
+kubectl apply -f services/
+```

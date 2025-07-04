@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: traefik
+spec:
+  controller: traefik.io/ingress-controller
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-strip-prefix@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: api.example.com
+    http:
+      paths:
+      - path: /api1
+        pathType: Prefix
+        backend:
+          service:
+            name: api1-svc
+            port:
+              number: 80
+      - path: /api2
+        pathType: Prefix
+        backend:
+          service:
+            name: api2-svc
+            port:
+              number: 80 

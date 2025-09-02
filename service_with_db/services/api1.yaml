@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api1
+  template:
+    metadata:
+      labels:
+        app: api1
+    spec:
+      containers:
+      - name: api1
+        image: ttl.sh/oneeyedsunday_api1:1h # TODO template
+        env:
+        - name: DB_HOST
+          value: pg1-svc
+        - name: PORT
+          value: "8080"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pg-db1-secrets
+              key: POSTGRES_PASSWORD
+        ports:
+          - containerPort: 8080
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api1-svc
+spec:
+  selector:
+    app: api1
+  ports:
+  - port: 80
+    targetPort: 8080
